@@ -22,6 +22,7 @@ import scipy
 import struct
 import csv
 import os
+import copy
 
 import datetime
 
@@ -500,7 +501,7 @@ async def connect_address(Devices:list[MSenseDevice]=None):
         #if item is not None:
             #device_object = deepcopy(item)
         if devi.name in device_set:
-            device_object = device_set[devi.name]
+            device_object = copy.copy(device_set[devi.name])
             #device_object.name = devi.name
             device_object.address = devi.address
             addr = devi.address
