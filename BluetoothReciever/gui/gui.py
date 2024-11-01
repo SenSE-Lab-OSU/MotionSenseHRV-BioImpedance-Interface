@@ -444,6 +444,7 @@ class MotionSenseApp(QWidget):
             for device in self.devices:
                 index += 1
                 self.log("registering device " + str(device.address))
+                self.create_log_and_folders()
                 path = self.path + "\\" + device.name
                 options = device.get_characteristics()
                 if len(options) == 0:
