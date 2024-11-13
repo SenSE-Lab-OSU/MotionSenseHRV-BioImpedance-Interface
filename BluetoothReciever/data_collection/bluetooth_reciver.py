@@ -592,8 +592,10 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
         print("trying to connect with client")
         async with BleakClient(address) as client:
             #client.connect()
+
             x = client.is_connected
-            client.__str__()
+            dev_string = client.__str__()
+            print(dev_string)
             print("connected to " + str(Name) + "!")
             logger.info("Connected: {0}".format(x))
 

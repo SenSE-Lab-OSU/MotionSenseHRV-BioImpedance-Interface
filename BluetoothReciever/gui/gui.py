@@ -14,7 +14,7 @@ def is_multiprocessing():
     return multiprocessing.get_start_method(allow_none=True) is not None
 
 use_multiprocessing = True
-
+show_logging_buttons = False
 
 import datetime
 
@@ -100,6 +100,7 @@ class MotionSenseApp(QWidget):
         # a logging file for notes and documentation.
         # is given a file once data collection starts
         self.logging_file = None
+        self.user_log_file = None
         self.path = None
         self.update_modulus = 0
         #
@@ -171,22 +172,25 @@ class MotionSenseApp(QWidget):
 
         logging_header = QLabel("Logging Options")
         logging_header.setFont(font)
-        Option1 = QLoggingOptions(self, "Pre-Bike")
-        Option2 = QLoggingOptions(self, "Bike")
-        Option3 = QLoggingOptions(self, "Wrist Pace")
-        Option4 = QLoggingOptions(self, "Cooldown")
-        Option5 = QLoggingOptions(self, "Post-Bike")
-
-        Options = QHBoxLayout()
         self.collections_layout.addWidget(logging_header)
-        Options.addWidget(Option1)
-        Options.addWidget(Option2)
-        Options.addWidget(Option3)
-        Options.addWidget(Option4)
-        Options.addWidget(Option5)
-        self.collections_layout.addRow(Options)
+        if show_logging_buttons:
+            Options = QHBoxLayout()
+            Option1 = QLoggingOptions(self, "Pre-Bike")
+            Option2 = QLoggingOptions(self, "Bike")
+            Option3 = QLoggingOptions(self, "Wrist Pace")
+            Option4 = QLoggingOptions(self, "Cooldown")
+            Option5 = QLoggingOptions(self, "Post-Bike")
 
-        self.reset_button = PyQt5.QtWidgets.QPushButton("Reset Device Flash")
+
+
+            Options.addWidget(Option1)
+            Options.addWidget(Option2)
+            Options.addWidget(Option3)
+            Options.addWidget(Option4)
+            Options.addWidget(Option5)
+            self.collections_layout.addRow(Options)
+
+        self.reset_button = PyQt5.QtWidgets.QPushButton("Erase Flash (Warning: this will clear all files!)")
         self.reset_button.clicked.connect(self.reset_device_async)
 
 
@@ -308,7 +312,7 @@ class MotionSenseApp(QWidget):
         self.create_log_and_folders()
         if len(connect_addresses) != 0:
             self.log_disp.setText("collection will be saved to")
-            self.button.setText("connected!")
+            self.button.setText("found!")
             self.button.setDisabled(True)
             self.gather_button.setEnabled(True)
             self.addresses.extend(connect_addresses)
@@ -361,6 +365,7 @@ class MotionSenseApp(QWidget):
                         self.log("error trying to process battery level")
                 else:
                     disconnected_devices += 1
+                    self.log(device.name + "Has Disconnected!")
             debug_string = "Current Collecting Devices: " + str(len(self.threads)- disconnected_devices) + "\n"
             debug_string += "disconnected_devices = " + str(disconnected_devices)
             if self.currently_collecting:
@@ -504,7 +509,9 @@ class MotionSenseApp(QWidget):
         self.log("attempting to reset devices...")
         loop = asyncio.new_event_loop()
         for device in self.devices:
-            loop.run_until_complete(bluetooth_reciver.reset_device(device.address))
+            options = device.get_characteristics()
+            if len(options) > 0:
+                loop.run_until_complete(bluetooth_reciver.reset_device(device.address))
 
     def reset_device_async(self):
         p = threading.Thread(target=self.reset_devices)
