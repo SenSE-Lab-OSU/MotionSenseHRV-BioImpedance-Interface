@@ -45,6 +45,9 @@ MSense4SensorLeft2 = bluetooth_reciver.MSenseDevice("MSense4Left1", [enmo])
 
 MSense4SensorRight2 = bluetooth_reciver.MSenseDevice("MSense4Right1", [enmo])
 
+DefaultMSense4 = bluetooth_reciver.MSenseDevice("MSense4", [enmo])
+
+
 # to replace, comment out the above 2 lines of code and replace it with these:
 #  
 #RightSensor = bluetooth_reciver.MSenseDevice("RightMotionSense2", [ppg_sensor, magnometer, accelorometer])
@@ -60,7 +63,7 @@ RBioZSensor = bluetooth_reciver.MSenseDevice("RBIOZ", [MagnitudeImpedance])
 
 
 # if you would like to add a new MSense device, please add it here
-all_sensors = [ RightSensor, LeftSensor, LBioZSensor, RBioZSensor, RightSensor2, LeftSensor2, MSense4SensorLeft, MSense4SensorRight, MSense4SensorLeft2, MSense4SensorRight2]
+all_sensors = [ RightSensor, LeftSensor, LBioZSensor, RBioZSensor, RightSensor2, LeftSensor2, MSense4SensorLeft, MSense4SensorRight, MSense4SensorLeft2, MSense4SensorRight2, DefaultMSense4]
 
 
 
