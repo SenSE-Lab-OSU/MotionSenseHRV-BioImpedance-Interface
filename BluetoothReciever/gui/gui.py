@@ -214,7 +214,14 @@ class MotionSenseApp(QWidget):
         self.collections_layout.addRow(self.log_button, self.th_log)
         self.completed_messages = QLabel("")
         self.collections_layout.addWidget(self.completed_messages)
-        self.collections_layout.addWidget(self.reset_button)
+
+        self.reset_password = QLineEdit()
+        self.reset_layout = QHBoxLayout()
+        self.reset_layout.addWidget(self.reset_button)
+        self.reset_layout.addWidget(QLabel("passcode for Erase:"))
+        self.reset_layout.addWidget(self.reset_password)
+
+        self.collections_layout.addRow(self.reset_layout)
         self.collections_layout.addWidget(QLabel(" "))
 
 
@@ -506,12 +513,15 @@ class MotionSenseApp(QWidget):
 
 
     def reset_devices(self):
-        self.log("attempting to reset devices...")
-        loop = asyncio.new_event_loop()
-        for device in self.devices:
-            options = device.get_characteristics()
-            if len(options) > 0:
-                loop.run_until_complete(bluetooth_reciver.reset_device(device.address))
+        if self.reset_password.text().isnumeric() and int(self.reset_password.text()) == 68:
+            self.log("correct code, attempting to reset devices...")
+            loop = asyncio.new_event_loop()
+            for device in self.devices:
+                options = device.get_characteristics()
+                if len(options) > 0:
+                    loop.run_until_complete(bluetooth_reciver.reset_device(device.address))
+        else:
+            self.log("incorrect passcode")
 
     def reset_device_async(self):
         p = threading.Thread(target=self.reset_devices)
