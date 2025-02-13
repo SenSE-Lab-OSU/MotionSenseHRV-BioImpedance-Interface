@@ -530,11 +530,11 @@ def create_csv_file(name:str, path):
         MSense_data.ppg_file = csv.DictWriter(th_csv_file, fieldnames=field_names)
         MSense_data.ppg_file.writeheader()
 
-def test_function(address, path, record_length, options, test_flag, name):
+def launch_collection(address, path, participant_name, record_length, options, test_flag, name):
     print("I am running in a test call!")
     print("imported")
     try:
-        non_async_collect(address, path, record_length, options, test_flag, name)
+        non_async_collect(address, path, participant_name, record_length, options, test_flag, name)
 
     except Exception as err:
         print(err)
@@ -543,21 +543,21 @@ def test_function(address, path, record_length, options, test_flag, name):
 
 
 # this is the function that is executed inside the GUI to make sure everything runs properly
-def non_async_collect(address, path, max_length, collect_options, end_flag, name):
+def non_async_collect(address, path, participant_name, max_length, collect_options, end_flag, name):
     print("starting non async collecion function with parameters:")
     print("address: " + address)
     print("path: " + path)
     print("collection options: " + str(collect_options))
     loop = asyncio.new_event_loop()
     try:
-        loop.run_until_complete(run(address, True, path=path, data_amount=max_length, options=collect_options, status_flag=end_flag, Name=name))
+        loop.run_until_complete(run(address, True, path=path, participant_id=participant_name, data_amount=max_length, options=collect_options, status_flag=end_flag, Name=name))
     except Exception as e:
         print("bleak client backend bluetooth error")
         print(e)
         
 
 
-async def run(address, debug=True, path=None, data_amount = 30.0, options:list[MSenseCharacteristic]=None, status_flag=None, Name="M"):
+async def run(address, debug=True, path=None, participant_id="Default Partipant", data_amount = 30.0, options:list[MSenseCharacteristic]=None, status_flag=None, Name="M"):
     global file_name
     file_name = path
     try:
@@ -624,7 +624,7 @@ async def run(address, debug=True, path=None, data_amount = 30.0, options:list[M
             if  "MotionSenseHRV4" in Name or "MSense4" in Name:
                 print("Found MSense4 Device!")
                 unix_time = struct.pack("<Q", int(time.time()))
-                encoding = compute_int_hash(path)
+                encoding = compute_int_hash(participant_id)
                 await client.write_gatt_char(bleak.uuids.normalize_uuid_str("da39c932-1d81-48e2-9c68-d0ae4bbd351f"),
                                              unix_time)
                 await client.write_gatt_char(bleak.uuids.normalize_uuid_str("da39c933-1d81-48e2-9c68-d0ae4bbd351f"), encoding)

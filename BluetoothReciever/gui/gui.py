@@ -440,7 +440,7 @@ class MotionSenseApp(QWidget):
             # need to figure out how to handel async events here
 
 
-            self.log("trying to start collection...")
+            self.log("trying to start collection for" + self.file_line3.text() + "...")
             try:
                 self.record_length = float(self.file_line4.text()) * 60
             except ValueError:
@@ -458,6 +458,9 @@ class MotionSenseApp(QWidget):
                 self.log("registering device " + str(device.address))
                 self.create_log_and_folders()
                 path = self.path + "\\" + device.name
+                participant = self.file_line3.text()
+                self.log("registering participant " + participant)
+
                 options = device.get_characteristics()
                 if len(options) == 0:
                     # if the user didn't check any boxes we don't need to run any data
@@ -480,10 +483,10 @@ class MotionSenseApp(QWidget):
                 self.log("creating Process...")
                 if use_multiprocessing:
                     exit_flag = multiprocessing.Value("i", 2)
-                    p = multiprocessing.Process(target=bluetooth_reciver.test_function, args=(device.address, path, self.record_length, options, exit_flag, device.name))
+                    p = multiprocessing.Process(target=bluetooth_reciver.launch_collection, args=(device.address, path, participant, self.record_length, options, exit_flag, device.name))
                     self.threads.append([p, exit_flag, device])
                 else:
-                    p = threading.Thread(target=bluetooth_reciver.test_function, args=(copy.copy(device.address), copy.copy(path), self.record_length, copy.copy(options), num(self.threads, copy.copy(index)), copy.deepcopy(device.name)))
+                    p = threading.Thread(target=bluetooth_reciver.launch_collection, args=(copy.copy(device.address), copy.copy(path), participant, self.record_length, copy.copy(options), num(self.threads, copy.copy(index)), copy.deepcopy(device.name)))
                     self.threads.append([p, 2, device])
                 self.log("attempting to start thread" + str(total_checks))
                 p.start()
