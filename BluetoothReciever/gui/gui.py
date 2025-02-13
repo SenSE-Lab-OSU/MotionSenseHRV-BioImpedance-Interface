@@ -156,7 +156,7 @@ class MotionSenseApp(QWidget):
 
         # we create a counter for max length
         self.file_line4 = QLineEdit()
-        self.file_line4.setText(str(23.0))
+        self.file_line4.setText(str(150.0))
 
         self.path_desciption = QLabel("Path Will be Saved To")
         self.edit_path_button = PyQt5.QtWidgets.QPushButton("Show Additional Options")
@@ -269,6 +269,7 @@ class MotionSenseApp(QWidget):
             self.topLayout.addRow("Folder (Study) Name:", self.file_line2)
             self.topLayout.addRow("Stop Recording Data after: (min)", self.file_line4)
             self.enable_csv = QCheckBox()
+            self.enable_csv.setChecked(True)    # default enable LSL
             self.topLayout.addRow("Open LSL Connection during Streaming", self.enable_csv)
             self.edit_path_button.setText("Hide Additional Options")
             self.topLayout.addWidget(self.edit_path_button)
