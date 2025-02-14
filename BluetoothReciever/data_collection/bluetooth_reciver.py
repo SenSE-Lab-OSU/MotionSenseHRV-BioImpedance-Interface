@@ -23,7 +23,8 @@ import struct
 import csv
 import os
 import copy
-
+import os
+import platform
 import datetime
 
 debug_print_updates = False
@@ -42,27 +43,14 @@ def is_multiprocessing():
     """Check if the current script is running in a multiprocessing context."""
     return multiprocessing.get_start_method(allow_none=True) is not None
 
-if True:
-    try:
-        # this is a quick fix for windows devices in which the backend is win32, because win32 does not allow
-        # a gui tick with bleak for some reason
-        from bleak.backends.winrt.util import allow_sta, uninitialize_sta
-        print("performing sta logistics")
-        print(sys.modules)
-        if not is_multiprocessing():
-            allow_sta()
-        else:
-            uninitialize_sta()
-    except AttributeError as e:
-        print("skipped sta")
-        print(e)
-        # other OSes and versions work, so we can just ignore.
-        pass
-    except ModuleNotFoundError as e:
-        print("skipped sta")
-        print(e)
-        # other OSes and versions work, so we can just ignore.
-        pass
+# this is a quick fix for windows devices in which the backend is win32, because win32 does not allow
+# a gui tick with bleak for some reason
+if "win" in platform.platform().lower():
+    from bleak.backends.winrt.util import allow_sta, uninitialize_sta
+    if not is_multiprocessing():
+        allow_sta()
+    else:
+        uninitialize_sta()
 
 Tensorflow_UUID = ""
 ppg_UUID = ""
@@ -625,6 +613,8 @@ async def run(address, debug=True, path=None, participant_id="Default Partipant"
                 print("Found MSense4 Device!")
                 unix_time = struct.pack("<Q", int(time.time()))
                 encoding = compute_int_hash(participant_id)
+                print(f"====== hasing {participant_id} to {struct.unpack('<I', encoding)}")
+                
                 await client.write_gatt_char(bleak.uuids.normalize_uuid_str("da39c932-1d81-48e2-9c68-d0ae4bbd351f"),
                                              unix_time)
                 await client.write_gatt_char(bleak.uuids.normalize_uuid_str("da39c933-1d81-48e2-9c68-d0ae4bbd351f"), encoding)

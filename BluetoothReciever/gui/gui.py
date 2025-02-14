@@ -152,7 +152,10 @@ class MotionSenseApp(QWidget):
         self.file_line2.setText("data")
 
         self.file_line3 = QLineEdit()
-        self.file_line3.setText("Default Participant")
+        self.file_line3.setText("sub-4000")
+
+        self.file_session_id = QLineEdit()
+        self.file_session_id.setText("ses-00")
 
         # we create a counter for max length
         self.file_line4 = QLineEdit()
@@ -166,6 +169,7 @@ class MotionSenseApp(QWidget):
         #self.topLayout.addRow(self.path_desciption)
 
         self.topLayout.addRow("Enter Participant ID", self.file_line3)
+        self.topLayout.addRow("Enter Session ID", self.file_session_id)
         self.topLayout.addWidget(self.edit_path_button)
 
         self.collections_layout = QFormLayout()
@@ -278,6 +282,7 @@ class MotionSenseApp(QWidget):
             for i in reversed(range(self.topLayout.count())):
                 self.topLayout.itemAt(i).widget().setParent(None)
             self.topLayout.addRow("Enter Participant ID", self.file_line3)
+            self.topLayout.addRow("Enter Session ID", self.file_session_id)
 
             self.topLayout.addWidget(self.edit_path_button)
             self.edit_path_button.setText("Show Additional Options")
@@ -285,10 +290,12 @@ class MotionSenseApp(QWidget):
 
 
     def create_log_and_folders(self):
-        new_user_path = self.file_line.text() + "\\" + self.file_line2.text()
-        if self.file_line3.text() != "Default Participant":
-            new_user_path += "\\" + self.file_line3.text()
-        print(new_user_path)
+        new_user_path = os.path.join(self.file_line.text(), 
+                                     self.file_line2.text(),
+                                     self.file_line3.text(),
+                                     self.file_session_id.text())
+
+        self.log(f"======== logging path: {new_user_path}")
         if new_user_path != self.path:
             # try and create the directory for storing data
             self.log("making directories..")
@@ -440,8 +447,7 @@ class MotionSenseApp(QWidget):
         else:
             # need to figure out how to handel async events here
 
-
-            self.log("trying to start collection for" + self.file_line3.text() + "...")
+            self.log("trying to start collection for " + self.file_line3.text() + "...")
             try:
                 self.record_length = float(self.file_line4.text()) * 60
             except ValueError:
@@ -459,7 +465,7 @@ class MotionSenseApp(QWidget):
                 self.log("registering device " + str(device.address))
                 self.create_log_and_folders()
                 path = self.path + "\\" + device.name
-                participant = self.file_line3.text()
+                participant = f"{self.file_line3.text()}_{self.file_session_id.text()}"
                 self.log("registering participant " + participant)
 
                 options = device.get_characteristics()
