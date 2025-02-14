@@ -48,7 +48,7 @@ if True:
         # a gui tick with bleak for some reason
         from bleak.backends.winrt.util import allow_sta, uninitialize_sta
         print("performing sta logistics")
-        print(sys.modules)
+        # print(sys.modules)
         if not is_multiprocessing():
             allow_sta()
         else:
@@ -625,6 +625,8 @@ async def run(address, debug=True, path=None, participant_id="Default Partipant"
                 print("Found MSense4 Device!")
                 unix_time = struct.pack("<Q", int(time.time()))
                 encoding = compute_int_hash(participant_id)
+                print(f"====== hasing {participant_id} to {struct.unpack("<I", encoding)}")
+                
                 await client.write_gatt_char(bleak.uuids.normalize_uuid_str("da39c932-1d81-48e2-9c68-d0ae4bbd351f"),
                                              unix_time)
                 await client.write_gatt_char(bleak.uuids.normalize_uuid_str("da39c933-1d81-48e2-9c68-d0ae4bbd351f"), encoding)
