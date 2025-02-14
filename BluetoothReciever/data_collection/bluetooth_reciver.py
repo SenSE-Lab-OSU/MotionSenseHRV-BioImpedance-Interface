@@ -23,7 +23,8 @@ import struct
 import csv
 import os
 import copy
-
+import os
+import platform
 import datetime
 
 debug_print_updates = False
@@ -42,27 +43,14 @@ def is_multiprocessing():
     """Check if the current script is running in a multiprocessing context."""
     return multiprocessing.get_start_method(allow_none=True) is not None
 
-if True:
-    try:
-        # this is a quick fix for windows devices in which the backend is win32, because win32 does not allow
-        # a gui tick with bleak for some reason
-        from bleak.backends.winrt.util import allow_sta, uninitialize_sta
-        print("performing sta logistics")
-        # print(sys.modules)
-        if not is_multiprocessing():
-            allow_sta()
-        else:
-            uninitialize_sta()
-    except AttributeError as e:
-        print("skipped sta")
-        print(e)
-        # other OSes and versions work, so we can just ignore.
-        pass
-    except ModuleNotFoundError as e:
-        print("skipped sta")
-        print(e)
-        # other OSes and versions work, so we can just ignore.
-        pass
+# this is a quick fix for windows devices in which the backend is win32, because win32 does not allow
+# a gui tick with bleak for some reason
+if "win" in platform.platform().lower():
+    from bleak.backends.winrt.util import allow_sta, uninitialize_sta
+    if not is_multiprocessing():
+        allow_sta()
+    else:
+        uninitialize_sta()
 
 Tensorflow_UUID = ""
 ppg_UUID = ""
