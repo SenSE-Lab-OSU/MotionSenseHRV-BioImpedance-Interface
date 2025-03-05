@@ -613,7 +613,7 @@ async def run(address, debug=True, path=None, participant_id="Default Partipant"
                 print("Found MSense4 Device!")
                 unix_time = struct.pack("<Q", int(time.time()))
                 encoding = compute_int_hash(participant_id)
-                print(f"====== hasing {participant_id} to {struct.unpack('<I', encoding)}")
+                print(f"====== hashing {participant_id} to {struct.unpack('<I', encoding)}")
                 
                 await client.write_gatt_char(bleak.uuids.normalize_uuid_str("da39c932-1d81-48e2-9c68-d0ae4bbd351f"),
                                              unix_time)

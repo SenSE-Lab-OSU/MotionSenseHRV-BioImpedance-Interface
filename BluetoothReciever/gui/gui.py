@@ -7,6 +7,7 @@ import copy
 import asyncio
 import multiprocessing
 import threading
+import random
 
 
 def is_multiprocessing():
@@ -460,12 +461,14 @@ class MotionSenseApp(QWidget):
             # for all MSense devices, get the characteristics that are checked and collect data from them
             # device is a MotionSense_QWidget device
             index = -1
+            # session tag: randomly generated in case operator error overwriting sub/ses IDs
+            self.session_parity_tag = f"{chr(random.randint(65, 90))}{chr(random.randint(65, 90))}"  # ASCII range for A-Z
             for device in self.devices:
                 index += 1
                 self.log("registering device " + str(device.address))
                 self.create_log_and_folders()
                 path = self.path + "\\" + device.name
-                participant = f"{self.file_line3.text()}_{self.file_session_id.text()}"
+                participant = f"{self.file_line3.text()}_{self.file_session_id.text()}{self.session_parity_tag}"
                 self.log("registering participant " + participant)
 
                 options = device.get_characteristics()
