@@ -1,0 +1,20 @@
+name: Pyinstaller
+
+on:
+  push:
+    branches: [ UCLA ]
+  pull_request:
+    branches: [ UCLA ]
+
+jobs:
+  pyinstaller-build:
+    runs-on: macos-latest
+    steps:
+      - name: Create Executable
+        uses: sayyid5416/pyinstaller@v1
+        with:
+          python_ver: '3.12'
+          spec: 'BluetoothReciever/MotionSenseCollection.spec'
+          requirements: 'BluetoothReciever/requirements.txt'
+          upload_exe_with_name: 'MotionSenseCollection.App'
+          options: --name "MotionSenseCollection"
