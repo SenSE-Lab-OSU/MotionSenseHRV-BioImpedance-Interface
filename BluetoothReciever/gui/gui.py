@@ -313,8 +313,8 @@ class MotionSenseApp(QWidget):
                 self.log("moving on")
             self.log("sucessfully created directories!")
             if self.logging_file is None:
-                self.logging_file = open(self.path + "\\" + "log.txt", "a")
-                self.user_log_file = open(self.path + "\\" + "user_log.txt", "a")
+                self.logging_file = open(os.path.join(self.path, "log.txt"), "a")
+                self.user_log_file = open(os.path.join(self.path, "user_log.txt"), "a")
                 self.log("created and activated log file...")
             else:
                 self.refresh_log_file()
@@ -467,7 +467,7 @@ class MotionSenseApp(QWidget):
                 index += 1
                 self.log("registering device " + str(device.address))
                 self.create_log_and_folders()
-                path = self.path + "\\" + device.name
+                path = os.path.join(self.path, device.name)
                 participant = f"{self.file_line3.text()}_{self.file_session_id.text()}{self.session_parity_tag}"
                 self.log("registering participant " + participant)
 
@@ -572,7 +572,7 @@ class MotionSenseApp(QWidget):
         if self.logging_file is not None and self.path is not None:
             if not self.logging_file.closed:
                 self.logging_file.close()
-            self.logging_file = open(self.path + "\\" + "log.txt", "a")
+            self.logging_file = open(os.path.join(self.path, "log.txt"), "a")
 
     def send_note(self):
         text_to_send = self.th_log.text()
