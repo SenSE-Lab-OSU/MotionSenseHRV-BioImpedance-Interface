@@ -46,11 +46,15 @@ def is_multiprocessing():
 # this is a quick fix for windows devices in which the backend is win32, because win32 does not allow
 # a gui tick with bleak for some reason
 if "win" in platform.platform().lower():
-    from bleak.backends.winrt.util import allow_sta, uninitialize_sta
-    if not is_multiprocessing():
-        allow_sta()
-    else:
-        uninitialize_sta()
+    try:
+        from bleak.backends.winrt import allow_sta, uninitialize_sta
+        if not is_multiprocessing():
+            allow_sta()
+        else:
+            uninitialize_sta()
+    except Exception as e:
+        print("error initializing windows backend logistics")
+        print(e)
 
 Tensorflow_UUID = ""
 ppg_UUID = ""
